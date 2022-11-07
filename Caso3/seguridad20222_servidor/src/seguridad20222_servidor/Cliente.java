@@ -62,8 +62,6 @@ public class Cliente extends Thread {
             
             //genera consulta int random
             int valorConsulta=  (int) (Math.random() * 1000);
-            System.out.println("Valor de consulta: "+valorConsulta);
-            System.out.println("Valor de la consulta: "+valorConsulta);
             byte[] consultaBytes= Integer.toString(valorConsulta).getBytes(); 
             byte[] iv1 = generateIvBytes();
             String str_iv1 = f.byte2str(iv1);
@@ -95,7 +93,10 @@ public class Cliente extends Thread {
                 boolean integridad= f.checkInt(respuestaBytes, sk_mac, respuestaMacBytes);
                 if(integridad) {
                     //print respuesta 
+                    System.out.println("\n ------------------------------------------------------------------");
+                    System.out.println("Valor de la consulta: "+valorConsulta);
                     System.out.println("Respuesta: "+new String(respuestaBytes));
+                    System.out.println(" \n------------------------------------------------------------------");
                     System.out.println(" valor Respuesta recibida");
                     env.println("OK");
                     System.out.println("Respuesta: "+ new String(respuestaBytes));
