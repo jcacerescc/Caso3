@@ -2,6 +2,7 @@ package seguridad20222_servidor;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
@@ -10,6 +11,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -152,5 +154,41 @@ public class SecurityFunctions {
 		return privkey;
 	}
 
+	public PublicKey getPublicKeyFromString(String string) {
+		PublicKey publicKey = null;
+		try {
+			byte[] byteKey = Base64.getDecoder().decode(string.getBytes());
+			X509EncodedKeySpec X509publicKey = new X509EncodedKeySpec(byteKey);
+			KeyFactory kf = KeyFactory.getInstance("RSA");
+			publicKey = kf.generatePublic(X509publicKey);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return publicKey;
 
+	}
+
+	//this function receives g,p and g^x and returns the shared secret
+	public BigInteger getSharedSecret(BigInteger g, BigInteger p, BigInteger gx) {
+		BigInteger sharedSecret = gx.modPow(gx, p);
+		return sharedSecret;
+	}
+	public byte[] str2byte( String ss){	
+			// Encapsulamiento con hexadecimales
+			byte[] ret = new byte[ss.length()/2];
+			for (int i = 0 ; i < ret.length ; i++) {
+				ret[i] = (byte) Integer.parseInt(ss.substring(i*2,(i+1)*2), 16);
+			}
+			return ret;
+		}
+		
+	public String byte2str( byte[] b ){	
+			// Encapsulamiento con hexadecimales
+			String ret = "";
+			for (int i = 0 ; i < b.length ; i++) {
+				String g = Integer.toHexString(((char)b[i])&0x00ff);
+				ret += (g.length()==1?"0":"") + g;
+			}
+			return ret;
+		}
 }

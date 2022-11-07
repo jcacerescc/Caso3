@@ -59,11 +59,11 @@ public class SrvThread extends Thread{
 
 	    try {
 
-			PrivateKey privadaServidor = f.read_kmin("datos_asim_srv.pri",dlg);
-			PublicKey publicaServidor = f.read_kplus("datos_asim_srv.pub",dlg);
+			PrivateKey privadaServidor = f.read_kmin("Caso3/seguridad20222_servidor/datos_asim_srv.pri",dlg);
+			PublicKey publicaServidor = f.read_kplus("Caso3/seguridad20222_servidor/datos_asim_srv.pub",dlg);
 			PrintWriter ac = new PrintWriter(sc.getOutputStream() , true);
 			BufferedReader dc = new BufferedReader(new InputStreamReader(sc.getInputStream()));
-				    	
+			System.out.println(dlg + "waiting for client.");
 			linea = dc.readLine();
 			System.out.println(dlg + "reading request: " + linea);
     		
@@ -77,11 +77,16 @@ public class SrvThread extends Thread{
     		String str_valor_comun = valor_comun.toString();
     		System.out.println(dlg + "G2X: "+str_valor_comun);
     		    		
-    		// sending G, P y G^x
+    		// sending G, P y G^x y llave publica servidor and publickey of the server, receiving G^y 
+
+			
     		ac.println(g.toString());
+			
     		ac.println(p.toString());
     		ac.println(str_valor_comun);
-    		
+			// sending public key of the server
+
+			ac.println(dlg);
     		if (mod==0) {
     			exito = opt0(str_valor_comun, ac, dc);
     		} else if (mod==1){
@@ -111,6 +116,7 @@ public class SrvThread extends Thread{
 		byte[] byte_authentication = f.sign(privadaError, msj);
 		String str_authentication = byte2str(byte_authentication);
 		ac.println(str_authentication);
+
 		linea = dc.readLine();
 		boolean exito;
 		if (linea.compareTo("ERROR")==0) {
@@ -134,6 +140,8 @@ public class SrvThread extends Thread{
 		byte[] byte_authentication = f.sign(privadaServidor, msj);
 		String str_authentication = byte2str(byte_authentication);
 		ac.println(str_authentication);
+
+
 		linea = dc.readLine();
 		
 		if (linea.compareTo("ERROR")==0) {
@@ -228,7 +236,10 @@ public class SrvThread extends Thread{
 		String msj = g.toString()+","+p.toString()+","+str_valor_comun;
 		byte[] byte_authentication = f.sign(privadaServidor, msj);
 		String str_authentication = byte2str(byte_authentication);
+		
 		ac.println(str_authentication);
+
+		System.out.println();
 		linea = dc.readLine();
 		
 		if (linea.compareTo("ERROR")==0) {
@@ -303,6 +314,7 @@ public class SrvThread extends Thread{
 		} 
 		return exito;
 	}
+
 	
 	public byte[] str2byte( String ss)
 	{	
@@ -333,8 +345,8 @@ public class SrvThread extends Thread{
 
         String txtP = p.toString();
         String txtG = g.toString();
-        System.out.println(dlg + "P: " +txtP);
-        System.out.println(dlg + "G: " +txtG);
+        //System.out.println(dlg + "P: " +txtP);
+        //System.out.println(dlg + "G: " +txtG);
 	}
 	
 	private byte[] generateIvBytes() {
