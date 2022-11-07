@@ -38,17 +38,16 @@ public class Cliente extends Thread {
 
 
         String firma= in.readLine();
-        System.out.println("se recupero Firma: " + firma);
         firmaServer= f.str2byte(firma);
 
         boolean Vereificacion= f.checkSignature(publicKeyServer, firmaServer, pgx);
 
         if(Vereificacion) {
-            System.out.println("Verificacion exitosa");
+            System.out.println("Verificacion de firma exitosa");
             env.println("OK");
             // choose a random bigInteger for diffie hellman
-            Random rand = new Random();
 
+            Random rand = new Random();
             BigInteger x = new BigInteger(128, rand);
             // calculate gy
             BigInteger gy = g.modPow(x, p);
@@ -63,6 +62,7 @@ public class Cliente extends Thread {
             
             //genera consulta int random
             int valorConsulta=  (int) (Math.random() * 1000);
+            System.out.println("Valor de consulta: "+valorConsulta);
             System.out.println("Valor de la consulta: "+valorConsulta);
             byte[] consultaBytes= Integer.toString(valorConsulta).getBytes(); 
             byte[] iv1 = generateIvBytes();
@@ -94,7 +94,9 @@ public class Cliente extends Thread {
                 byte[] respuestaMacBytes= f.str2byte(respuestaMac);
                 boolean integridad= f.checkInt(respuestaBytes, sk_mac, respuestaMacBytes);
                 if(integridad) {
-                    System.out.println("Respuesta recibida");
+                    //print respuesta 
+                    System.out.println("Respuesta: "+new String(respuestaBytes));
+                    System.out.println(" valor Respuesta recibida");
                     env.println("OK");
                     System.out.println("Respuesta: "+ new String(respuestaBytes));
                 }else {
