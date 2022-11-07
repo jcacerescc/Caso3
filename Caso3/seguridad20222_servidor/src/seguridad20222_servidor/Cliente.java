@@ -54,7 +54,6 @@ public class Cliente{
             env.println(gy.toString());
             // calculate master key
             BigInteger masterkey=calcular_llave_maestra(gx, x, p);
-            System.out.println("Llave maestra: "+masterkey.toString());
             // generating simeetric key
             SecretKey sk_c = f.csk1(masterkey.toString());
             SecretKey sk_mac= f.csk2(masterkey.toString());
@@ -79,14 +78,38 @@ public class Cliente{
             env.println(str_iv1);
 
 
-
-            //send iv1 to server
-            env.println(f.byte2str(iv1));
+            String linea=in.readLine();
+            if(linea.compareTo("OK")==0) {
+                System.out.println("Consulta verificada");
+                //recibir respuesta
+                String respuestaEnc=in.readLine();
+                String respuestaMac=in.readLine();
+                String respuestaIv=in.readLine();
+                IvParameterSpec ivSpec1 = new IvParameterSpec(f.str2byte(respuestaIv));
+                //desencriptar respuesta
+                byte[] respuestaBytes= f.sdec(f.str2byte(respuestaEnc), sk_c, ivSpec1);
+                //verificar integridad
+                byte[] respuestaMacBytes= f.str2byte(respuestaMac);
+                boolean integridad= f.checkInt(respuestaBytes, sk_mac, respuestaMacBytes);
+                if(integridad) {
+                    System.out.println("Respuesta recibida");
+                    env.println("OK");
+                    System.out.println("Respuesta: "+ new String(respuestaBytes));
+                }else {
+                    env.println("ERROR");
+                    System.out.println("Respuesta no recibida, integridad comprometida o no verificada"); 
+                }
+  
 
         }else {
             // send error to server
             env.println("ERROR");
             System.out.println("Verificacion fallida");
+        }}
+        else {
+            // send error to server
+            env.println("ERROR");
+            System.out.println("Verificacion fallida, la firma no coincide con los datos");
         }
 
    

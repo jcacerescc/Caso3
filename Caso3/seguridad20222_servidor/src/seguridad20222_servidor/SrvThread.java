@@ -158,7 +158,7 @@ public class SrvThread extends Thread{
     		BigInteger g2y = new BigInteger(linea);
     		BigInteger llave_maestra = calcular_llave_maestra(g2y,bix,p);
     		String str_llave = llave_maestra.toString();
-    		System.out.println(dlg + " llave maestra: " + str_llave);
+    		//System.out.println(dlg + " llave maestra: " + str_llave);
     		
     		// generating symmetric key
 			SecretKey sk_srv = f.csk1(str_llave);
