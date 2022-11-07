@@ -10,8 +10,7 @@ import java.util.Random;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-public class Cliente{
-
+public class Cliente extends Thread {
     public static int port=4030;
     public static String host="localhost";
     private BigInteger g;
@@ -21,12 +20,15 @@ public class Cliente{
     private byte[] firmaServer;
     private static SecurityFunctions f;	
     private String pgx;
+    private int clientID=0;
     
 
 
 
     public void recibirDatosServer(BufferedReader in, PrintWriter env ) throws Exception {
-        env.println("1");
+        //converts clientID to string
+        String clientIDString = Integer.toString(clientID);
+        env.println(clientIDString);
         g = new BigInteger(in.readLine());
         p = new BigInteger(in.readLine());
         gx= new BigInteger(in.readLine());
@@ -116,17 +118,30 @@ public class Cliente{
     }
 
     public static void main(String[] args) throws Exception {
+        System.out.println("Digite la cantidad de clientes a crear");
+        BufferedReader inC = new BufferedReader(new java.io.InputStreamReader(System.in));
+        int cantidad = Integer.parseInt(inC.readLine());
+       
+        for(int i=0; i<cantidad; i++) {
+            Cliente c = new Cliente();
+            c.start();
+        }
 
-        f = new SecurityFunctions();
-        Socket s = new Socket(host, port);
-        BufferedReader in = new BufferedReader(new java.io.InputStreamReader(s.getInputStream()));
-        PrintWriter env = new PrintWriter(s.getOutputStream(), true);
-        Cliente c = new Cliente();
-        c.recibirDatosServer(in, env);
-        s.close();
     }
 
   
+    public void run(){
+        try {
+            f= new SecurityFunctions();
+            Socket s = new Socket(host, port);
+            BufferedReader in = new BufferedReader(new java.io.InputStreamReader(s.getInputStream()));
+            PrintWriter env = new PrintWriter(s.getOutputStream(), true);
+            Cliente c = new Cliente();
+            c.recibirDatosServer(in, env);
+            s.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+    }}
     
 
     private BigInteger calcular_llave_maestra(BigInteger base, BigInteger exponente, BigInteger modulo) {
