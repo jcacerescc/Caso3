@@ -95,9 +95,8 @@ public class Cliente extends Thread {
                     //print respuesta 
                     System.out.println("\n ------------------------------------------------------------------");
                     System.out.println("Valor de la consulta: "+valorConsulta);
-                    System.out.println("Respuesta: "+new String(respuestaBytes));
+                    System.out.println("Respuesta Servidor: "+new String(respuestaBytes));
                     System.out.println(" \n------------------------------------------------------------------");
-                    System.out.println(" valor Respuesta recibida");
                     env.println("OK");
                     System.out.println("Respuesta: "+ new String(respuestaBytes));
                 }else {
